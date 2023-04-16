@@ -896,6 +896,15 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
 }
 
+
+/**
+* Dogira.net - TimeLock
+* @dev Implementation of a simple timelock mechanism for protecting high-security functions.
+*
+* The modifier withTimelock(functionName) can be added to any function, ensuring any use
+* is preceeded by a 24hr wait period, and an appropriate event emission. Following execution
+* of the function, the lock will be automatically re-applied.
+*/
 contract TimeLock is Ownable {
     uint256 public constant lockDuration = 24 hours;
 
@@ -924,8 +933,11 @@ contract TimeLock is Ownable {
     }
 }
 
-contract DogechainTemplateToken is ERC20, Ownable, TimeLock {
-    string private _name = "DogechainTemplateToken";
+/**
+* Dogira.net - Taxable/Auto-LP ERC20
+*/
+contract DogechainTokenTemplate is ERC20, Ownable, TimeLock {
+    string private _name = "DogechainTokenTemplate";
     string private _symbol = "DTT";
 
     uint8 private _decimals = 18;
@@ -953,6 +965,7 @@ contract DogechainTemplateToken is ERC20, Ownable, TimeLock {
     event PrimaryRouterUpdated(address indexed previousRouter, address indexed newRouter);
     event PrimaryPairAutoDetected(address indexed previousPair, address indexed newPair);
     event TaxStatusUpdated(address indexed account, bool isTaxed);
+    event ExemptStatusUpdated(address indexed account, bool isExempt);
 
     event SwapAndLiquify(
         uint256 tokensSwapped,
@@ -1169,6 +1182,16 @@ contract DogechainTemplateToken is ERC20, Ownable, TimeLock {
     function removeFromTaxed(address account) external onlyOwner {
         _isTaxed[account] = false;
         emit TaxStatusUpdated(account, false);
+    }
+
+    function addToExempt(address account) external onlyOwner {
+        _exemptList[account] = true;
+        emit ExemptStatusUpdated(account, true);
+    }
+
+    function removeFromExempt(address account) external onlyOwner {
+        _exemptList[account] = true;
+        emit ExemptStatusUpdated(account, false);
     }
 
     receive() external payable {}
