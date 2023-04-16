@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity 0.8.16;
 
 interface IUniswapV2Factory {
@@ -1031,7 +1030,7 @@ contract DogechainTemplateToken is ERC20, Ownable, TimeLock {
         require(balanceOf(from) >= amount, "ERC20: transfer amount exceeds balance");
 
         uint256 transferAmount = amount;
-        if (!_exemptList[from] || !_exemptList[to]) {
+        if (!_exemptList[from] && !_exemptList[to]) {
                 if (_isTaxed[from] || _isTaxed[to]) {
                 uint256 marketingShare = (amount * taxForMarketing) / 100;
                 uint256 liquidityShare = (amount * taxForLiquidity) / 100;
